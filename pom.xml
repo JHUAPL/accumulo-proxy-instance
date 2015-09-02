@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>edu.jhuapl.accumulo</groupId>
   <artifactId>proxy-instance-project</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Accumulo Proxy Instance Project</name>
   <description>Provides an Accumulo Java API Instance implementation that communicates via the Accumulo Thrift-based Proxy server.</description>
@@ -35,7 +35,7 @@
   <scm>
     <connection>scm:git:git@github.com/JHUAPL/accumulo-proxy-instance.git</connection>
     <developerConnection>scm:git:git@github.com:JHUAPL/accumulo-proxy-instance.git</developerConnection>
-    <tag>proxy-instance-project-1.0.0</tag>
+    <tag>HEAD</tag>
     <url>git@github.com:JHUAPL/accumulo-proxy-instance.git</url>
   </scm>
   <distributionManagement>

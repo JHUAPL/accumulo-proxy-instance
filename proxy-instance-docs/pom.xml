@@ -4,7 +4,7 @@
   <parent>
     <groupId>edu.jhuapl.accumulo</groupId>
     <artifactId>proxy-instance-project</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
   </parent>
   <artifactId>proxy-instance-docs</artifactId>
   <packaging>pom</packaging>
