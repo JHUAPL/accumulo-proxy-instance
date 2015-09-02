@@ -1,0 +1,64 @@
+== Development
+
+This chapter includes information for those wishing to further development on the `ProxyInstance`.
+
+=== Unit and Integration Tests
+
+The `ProxyInstance` repository contains a number of unit tests (`XxxTest.java`) and integration tests (`XxxIT.java`) in 
+the `src/test` directory.  But more are needed.
+
+As a convenience, developers may choose to have their unit and integration test classes subclass the provided `ConnectorBase` 
+class.  The ConnectorBase handles obtaining an `Instance` and `Connector` references that can be utilized by the
+tests.  
+
+A special tag interface called `IntegrationTest` has also been created.  If a sub-class of ConnectorBase containing tests 
+implements the `IntegrationTest` interface, it will be provided a `ProxyInstance` configured using the required `System` 
+properties: `accumulo.proxy.host`, `accumulo.proxy.port`, `accumulo.proxy.user`, and
+`accumulo.proxy.password`.  The integration tests assume a real Proxy Server is running somewhere on the network.  If the 
+test class does not implement `IntegrationTest`, a local Proxy Server will be created backed by a `MockInstance` 
+Accumulo (we do not use the mini due to https://issues.apache.org/jira/browse/ACCUMULO-3293[ACCUMULO-3293]).
+
+A common pattern when testing is to be able to test the logic via the local mock instance proxy server as a unit test and 
+test the same capabilities again against an external proxy server as an integration test.  The current infrastructure 
+enables this without duplication of code.  The general pattern is:
+
+. Create your unit tests by subclassing `ConnectorBase` and writing your tests against the `protected` member variables
+`instance` and `connector`.  When run as a unit tests, these will automatically be connected to a local, mock-based 
+proxy server. 
++
+[source,java]
+----
+public class SomeClassTest extends ConnectorBase {
+ 
+     @Test
+     public void testSomething() {
+        // make use of member variables 'instance' and 'connector' as needed,
+        // already initialized by parent ConnectorBase
+        BatchWriter bw = connector.createBatchWriter(...);
+        
+        // do more stuff...
+     }
+}
+----
+
+. Create your integration test by simply sub-classing your unit test and implement the tag interface `IntegrationTest`.  
+That is it.  When you run the integration tests, the `instance` and `connector` member variables will be connected to 
+the remote proxy server based on the required system parameters. 
++
+[source,java]
+----
+public class SomeClassIT extends SomeClassTest implements IntegrationTest {
+    
+    // Do nothing more; the ConnectorBase parent will recoginize this is an
+    // IntegrationTest and provide the appropriate 'instance' and
+    // 'connector' references and then execute all of the same logic the unit
+    // test executed.
+    
+    // Of course, you can create new methods here if there is additional 
+    // integration testing desired beyond what the unit test performed.
+    
+}
+----
+ 
+
+

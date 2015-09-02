@@ -1,0 +1,6 @@
+* text eol=lf
+
+*.java text
+*.txt text
+
+*.png binary

@@ -1,0 +1,32 @@
+== Introduction
+
+
+This is an implementation of the Accumulo `Instance` Application Programming Interface (API) which uses the Accumulo-supplied, Apache Thrift-based 
+proxy server as the back-end for communicating with an Accumulo instance.
+
+Apache Accumulo provides two methods for interacting with an Accumulo instance: a Java-based client library and an Apache Thrift-based 
+API.  The Java-based client library requires that the client application have direct network access to all data nodes in the Accumulo instance 
+cloud as the client application communicates directly with the tablet servers where the data is stored.
+
+image::traditional.png["Traditional",width="800",align="center"]
+
+The Thrift-based API interacts with an Accumulo instance through a Proxy Server; the client application only needs direct network 
+access to the Proxy Server (the proxy server, in turn, communicates with the tablet servers directly on behalf of the requesting 
+client application).  While providing similar capabilities as the Java-based client library, the Thrift-based API is significantly 
+different than the Java-based API.  The Thrift API was originally developed to provide Accumulo access to non-Java applications.  However, 
+in situations where the Accumulo cloud is not entirely network addressable by Java-based client applications (e.g., isolated behind a firewall), 
+it is useful to allow Java clients to utilize the proxy service.  Furthermore, It would be ideal to expose the proxy service through the same API
+as the traditional Java-based client library to protect client source code from significant changes based only on differences in the
+network topology.
+
+This Proxy `Instance` implementation provides such an implementation.  It is a Java-based client library for interacting with Accumulo's 
+ProxyService via the Thrift interface, but exposes the same Java API as the traditional Java-based client library.  This enables, 
+in the future (e.g., after development and testing) by moving the client code onto the isolated Accumulo network and with a simple switch 
+of the `Instance` type created, the Java client application can take advantage of the performance increase using the traditional Java
+client library.
+
+
+image::proxy.png["Proxy",width="800",align="center"]
+
+
+This version was written, compiled, and tested against Accumulo {accumuloVersion}.

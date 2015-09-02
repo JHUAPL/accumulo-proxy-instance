@@ -1,0 +1,75 @@
+== Usage
+
+This section contains a brief introduction to getting setup using the Proxy Instance.  
+
+. You must have the Accumulo Proxy Server up and running.  See http://accumulo.apache.org/1.6/accumulo_user_manual.html#_proxy for more information.
+
+. Include this for maven (or download the latest JARs from http://search.maven.org/[Maven Central])
++
+[source,xml,indent=0]
+----
+ <dependency>
+    <groupId>edu.jhuapl.accumulo</groupId>
+    <artifactId>proxy-instance</artifactId>
+    <version>${proxy.version}</version>
+ </dependency>
+----
++
+The current version is {docVersion}.
+
+. Create an instance of `ProxyInstance` and provide it the hostname (or IP address) and port where the proxy is running.
++
+[source,java]
+----
+ Instance instance = new ProxyInstance("proxyhost", 4567);
+ Connector connector = instance.getConnector(user, new PassworkToken(password));
+----
+
+. Use the `instance` and `connector` objects as you normally would using the traditional Java API.
+
+. When finished, we also need to close the `ProxyInstance`.  Unfortunately, a method to close an `Instance` does not exist in the public 
+API.  Therefore, we must add something like this when we are done with the `Instance`:
++
+[source,java]
+----
+  if (instance instanceof ProxyInstance) {
+     ((ProxyInstance)instance).close();
+  }
+
+----
+
+=== Configuration Parameters
+
+==== BatchScanner Fetch Size
+
+When fetching data from a `BatchScanner,` the Proxy Server API allows you to request data in batches.  By batching multiple {key,value}
+pairs up into a single fetch request, data latency and network bandwidth consumed may be reduced.  The pairs are queued in the Proxy Server 
+and returned in a batch when the fetch size (or the end of the `Scanner`) is reached.
+
+The `ProxyInstance` `BatchScanner` implementation defaults to a fetch size of 1,000 pairs.  In general, this is good for fetching a lot of 
+"small" data from very large tables.  However, in certain circumstances this batching can actually increase the data latency for the first 
+data element.  The ProxyServer will fill the entire fetch size buffer before sending any data to the client.  If very selective filtering is 
+applied to the scanner on the server-side, it may take a long time for the Proxy Server to find 1,000 pairs to return even if a few are found
+very quickly.  Furthermore, if the keys and/or values are sufficiently large (or the RAM available to the Proxy Server is sufficiently 
+limited), queuing 1,000 pairs in RAM can cause the Proxy Server to crash with an `OutOfMemoryException`.
+
+Therefore, the `ProxyInstance` provides a way for clients to modify the default fetch size via an optional argument to the `ProxyInstance` 
+constructor.  Unfortunately, there is no place within the Java API to specify a fetch size for a `BatchScanner` on a per-scanner 
+basis.  Therefore, changing the fetch size via the `ProxyInstance` constructor changes the fetch size for all ``BatchScanner``s created 
+by that instance.   If multiple fetch sizes are required/desired, the client application will have to create and manage multiple 
+``ProxyInstance``s and utilize the correct instance  to create individual ``BatchScanner``s based on the fetch size requirements.
+
+The fetch size specified must be strictly greater than 0 and less than or equal to 2,000.  If the value provided is outside of that 
+range, a warning will be logged and the default value of 1,000 will be used.
+
+To set a new fetch size via the constructor, use the 3-argument constructor:
+[source,java]
+----
+   String host = "myhost";
+   int port = 5432;
+   int fetchSize = 10;
+
+   Instance inst = new ProxyInstance(host, port, fetchSize);
+   ...
+----
+ 

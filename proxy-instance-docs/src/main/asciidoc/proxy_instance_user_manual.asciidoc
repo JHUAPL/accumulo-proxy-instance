@@ -1,0 +1,21 @@
+= Accumulo Proxy Instance User Manual 
+:author: JHUAPL
+:toc2:
+:toclevels: 2 
+:toc-title: Accumulo Proxy Instance
+:numbered: 
+:revnumber: {docVersion}
+
+include::chapters/introduction.txt[]
+
+include::chapters/building.txt[]
+
+include::chapters/usage.txt[]
+
+include::chapters/development.txt[]
+
+include::chapters/known_issues.txt[]
+
+image::apl_horizontal_blue.png["JHU/APL",width="450",align="center"]
+
+include::chapters/copyright.txt[]

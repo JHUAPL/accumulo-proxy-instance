@@ -1,0 +1,16 @@
+== Building
+
+The source hierarchy for `ProxyInstance` is:
+
+* *proxy-instance-project*: POM contains general plugin versions and configurations
+** *proxy-instance*: The actual source and test code for the `ProxyInstance`
+** *proxy-instance-docs*: This documentation
+** *proxy-instance-build*: Resources necessary for building (e.g, license information, formatting templates)
+
+To build the system, you can execute:
+
+ mvn package
+
+To build it while executing the integration tests (requires an external Accumulo instance and Proxy Server configured and running):
+
+ mvn failsafe:integration-test package -Daccumulo.proxy.host=myhost -Daccumulo.proxy.port=myport -Daccumulo.proxy.user=myuser -Daccumulo.proxy.password=mypassword

@@ -1,0 +1,10 @@
+== Known Issues
+
+Here we document the known issues.
+
+* Not all Java APIs are supported through the Proxy interface.  Currently, the proxy throws an `UnsupportedOperationException` in
+such cases.  We should enter tickets to update the proxy thrift interface to support these additional capabilities.
+* We currently need to close the instance which is not part of the public API.  Maybe we should open and close the transport every
+time we access the instance so we can open/close the transport each time?  Is there a better way to handle closing the transport
+without incurring the overhead of re-establishing the connection on every call?
+* Others?
