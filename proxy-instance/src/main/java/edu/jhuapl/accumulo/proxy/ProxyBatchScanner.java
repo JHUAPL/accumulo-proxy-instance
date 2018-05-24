@@ -113,6 +113,9 @@ class ProxyBatchScanner extends AbstractProxyScanner implements BatchScanner {
   }
 
   public void close() {
+    if(scannerId == null) {
+      return;
+    }
     try {
       connector.getClient().closeScanner(scannerId);
     } catch (TException e) {
